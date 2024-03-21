@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ccdb2f96-1eb7-4f2f-9526-e5f983ca92a0" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
+	<sub-flow name="TravelOnTip-GetSchedules-implementationFlow" doc:id="151bcbe5-ebdb-4327-a817-a1002a06a2a7" >
+		<db:select doc:name="Select schedules for TravelOntip system" doc:id="eea3acc9-01ad-4d26-bd60-379723b76035" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM transport.schedules where companyname='TravelOnTip']]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform response from DB to JSON" doc:id="42a92144-8bfa-4a1c-a8da-c1311166e6fc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	
 </mule>
